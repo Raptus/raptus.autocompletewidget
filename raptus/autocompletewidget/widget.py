@@ -11,6 +11,13 @@ from raptus.autocompletewidget.interfaces import ISearchableVocabulary
 from zope import component
 from zope import schema
 
+try:
+    # Support z3c.formwidget.query vocabulary_factory
+    # that implement IQuerySource
+    from z3c.formwidget.query.interfaces import IQuerySource
+except ImportError:
+    IQuerySource = None
+
 
 class AutocompleteSearch(BrowserView):
 
@@ -43,6 +50,8 @@ class AutocompleteSearch(BrowserView):
                 vocabulary = factory(self.context)
         if ISearchableVocabulary.providedBy(vocabulary):
             results = vocabulary.search(query, self.context)
+        elif IQuerySource is not None and IQuerySource.providedBy(vocabulary):
+            results = [(x.value, x.title) for x in vocabulary.search(query)]
         else:
             query = query.lower()
             vocab = field.Vocabulary(self.context).items()

@@ -12,6 +12,7 @@
 
     <metal:define define-macro="edit">
       <div metal:use-macro="here/widgets/lines/macros/edit" />
+      <input type="hidden" name="fieldname" value="" tal:attributes="name string:${fieldName}:list" />
       <script type="text/javascript" tal:content="structure python:widget.js(here, fieldName)"></script>
     </metal:define>
 
